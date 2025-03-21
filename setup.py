@@ -21,7 +21,7 @@ setup(
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'example_relations=example_relations:main',
+            'ie=information_extraction:main',
         ],
     },
 )

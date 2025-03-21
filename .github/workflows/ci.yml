@@ -22,6 +22,6 @@ jobs:
         python3 -m pip install --upgrade pip
         pip3 install -r requirements.txt
 
-    - name: Run example_relations.py
+    - name: Run information_extraction.py
       run: |
-        python example_relations.py
+        python information_extraction.py

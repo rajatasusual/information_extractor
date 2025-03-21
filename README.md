@@ -8,6 +8,41 @@
 
 **spacy_coref_rel** is a tool that leverages **spaCy** for coreference resolution and **SpanBERT** for relation extraction. This project integrates named entity recognition (NER) with relation extraction to identify and analyze relationships between entities in text.  
 
+## Features
+
+### SpanBERT Model
+- Pre-trained model for relation extraction between entities
+- Supports multiple entity types (PERSON, ORGANIZATION, LOCATION, etc.)
+- Handles special token markers for subject and object entities
+- Uses BERT architecture for sequence classification
+- GPU acceleration support when available
+- Configurable batch size and sequence length
+
+### Entity Processing
+- Maps between spaCy and SpanBERT entity labels
+- Supports common entity types:
+    - Organizations (ORG)
+    - Persons (PERSON)
+    - Locations (GPE, LOC)
+    - Dates (DATE)
+    - And more
+
+### Relation Extraction
+- Creates entity pairs from spaCy sentences
+- Handles bidirectional relationships
+- Configurable confidence threshold
+- Deduplicates relations with confidence scoring
+- Returns structured relation tuples
+- Detailed logging for debugging
+
+### Pretrained Models
+
+The `assets` directory contains the following pretrained models:
+
+- **pretrained_spanbert/** finetuned for TARCED use cases.
+- **corefereee_model_en** from stanford research
+- **en_core_web_md-3.50** from spaCy
+
 ## Installation  
 
 To install and set up the project, run the following commands:  
@@ -26,17 +61,17 @@ Ensure that you have **Git LFS** installed to handle large model files.
 To extract relations using **spaCy** and **SpanBERT**, you can run the provided example script:  
 
 ```bash
-python example_relations.py
+python code/information_extraction.py
 ```
 
-### Example (Inside `example_relations.py`)  
+### Example (Inside `code/information_extraction.py`)  
 
 ```python
 import spacy
 from spanbert_module import SpanBERT  # Import SpanBERT model
 
 # Load spaCy NLP model
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_md")
 
 # Sample text
 text = "Bill Gates founded Microsoft. Microsoft is headquartered in Redmond."

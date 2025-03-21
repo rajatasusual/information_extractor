@@ -11,9 +11,8 @@ import json
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-#from transformers import AutoTokenizer, AutoModel, BertForSequenceClassification
-from pytorch_pretrained_bert.modeling import BertForSequenceClassification
-from pytorch_pretrained_bert.tokenization import BertTokenizer
+from code.pytorch_pretrained_bert.modeling import BertForSequenceClassification
+from code.pytorch_pretrained_bert.tokenization import BertTokenizer
 from scipy.special import softmax
 
 # Special tokens used by the model.
