@@ -8,9 +8,9 @@ click==8.1.8
 cloudpathlib==0.21.0
 confection==0.1.5
 coreferee==1.4.1
-coreferee-model-en @ https://github.com/richardpaulhudson/coreferee/raw/master/models/coreferee_model_en.zip#sha256=aec5662b4af38fbf4b8c67e4aada8b828c51d4a224b5e08f7b2b176c02d8780f
+coreferee-model-en @ https://github.com/rajatasusual/spacy_coref_rel/raw/master/assets/coreferee_model_en.zip#sha256=aec5662b4af38fbf4b8c67e4aada8b828c51d4a224b5e08f7b2b176c02d8780f
 cymem==2.0.11
-en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0-py3-none-any.whl#sha256=0964370218b7e1672a30ac50d72cdc6b16f7c867496f1d60925691188f4d2510
+en-core-web-sm @ https://github.com/rajatasusual/spacy_coref_rel/raw/master/assets/en_core_web_sm-3.5.0-py3-none-any.whl#sha256=0964370218b7e1672a30ac50d72cdc6b16f7c867496f1d60925691188f4d2510
 filelock==3.13.1
 fsspec==2024.6.1
 idna==3.10
