@@ -19,17 +19,21 @@ nlp = spacy.load("en_core_web_md")
 # Load pre-trained SpanBERT model
 spanbert = SpanBERT("./assets/pretrained_spanbert")  
 
-# Process each text and extract relations
-all_relations = {}
-for i, text in enumerate(raw_texts):
-    # Apply spacy model to raw text
-    doc = nlp(text)
-    
-    # Extract relations
-    relations = extract_relations(doc, spanbert)
-    all_relations[f"Text {i+1}"] = dict(relations)
+def main():
+    # Process each text and extract relations
+    all_relations = {}
+    for i, text in enumerate(raw_texts):
+        # Apply spacy model to raw text
+        doc = nlp(text)
+        
+        # Extract relations
+        relations = extract_relations(doc, spanbert)
+        all_relations[f"Text {i+1}"] = dict(relations)
 
-# Print all relations
-for text_id, rels in all_relations.items():
-    print(f"\n{text_id} Relations:")
-    print(rels)
+    # Print all relations
+    for text_id, rels in all_relations.items():
+        print(f"\n{text_id} Relations:")
+        print(rels)
+
+if __name__ == "__main__":
+    main()
