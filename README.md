@@ -1,6 +1,10 @@
 # spacy_coref_rel  
 
 ## Overview  
+[![CI](https://github.com/rajatasusual/spacy_coref_rel/actions/workflows/ci.yml/badge.svg)](https://github.com/rajatasusual/spacy_coref_rel/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **spacy_coref_rel** is a tool that leverages **spaCy** for coreference resolution and **SpanBERT** for relation extraction. This project integrates named entity recognition (NER) with relation extraction to identify and analyze relationships between entities in text.  
 
