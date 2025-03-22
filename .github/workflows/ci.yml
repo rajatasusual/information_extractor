@@ -25,3 +25,16 @@ jobs:
     - name: Run information_extraction.py
       run: |
         python information_extraction.py
+
+    - name: Build and package
+      run: |
+        pip install wheel
+        python setup.py sdist
+        python setup.py bdist_wheel
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: information_extractor
+        path: dist/
+      
