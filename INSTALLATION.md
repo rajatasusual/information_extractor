@@ -2,7 +2,7 @@
 
 1. Clone the repository with Git LFS skip option:
 ```bash
-GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/rajatasusual/spacy_coref_rel.git
+GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/rajatasusual/information_extractor.git
 ```
 
 2. Install dependencies:

@@ -1,12 +1,12 @@
-# spacy_coref_rel  
+# information_extractor  
 
 ## Overview  
-[![CI](https://github.com/rajatasusual/spacy_coref_rel/actions/workflows/ci.yml/badge.svg)](https://github.com/rajatasusual/spacy_coref_rel/actions/workflows/ci.yml)
+[![CI](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml/badge.svg)](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-**spacy_coref_rel** is a tool that leverages **spaCy** for coreference resolution and **SpanBERT** for relation extraction. This project integrates named entity recognition (NER) with relation extraction to identify and analyze relationships between entities in text.  
+**information_extractor** is a tool that leverages **spaCy** for coreference resolution and **SpanBERT** for relation extraction. This project integrates named entity recognition (NER) with relation extraction to identify and analyze relationships between entities in text.  
 
 ## Features
 
@@ -48,8 +48,8 @@ The `assets` directory contains the following pretrained models:
 To install and set up the project, run the following commands:  
 
 ```bash
-GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/rajatasusual/spacy_coref_rel.git
-cd spacy_coref_rel
+GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/rajatasusual/information_extractor.git
+cd information_extractor
 pip3 install -r requirements.txt
 git lfs pull --include "assets/pretrained_spanbert/pytorch_model.bin"
 ```

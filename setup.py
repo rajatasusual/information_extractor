@@ -5,10 +5,10 @@ with open("requirements.txt") as f:
 with open("README.md", "r") as fh:
     long_description = fh.read()
 setup(
-    name='spacy_coref_rel',
+    name='information_extractor',
     version='0.1.0',
     author='Rajatasusual',
-    description='spacy_coref_rel is a tool that leverages spaCy for coreference resolution and SpanBERT for relation extraction. This project integrates named entity recognition (NER) with relation extraction to identify and analyze relationships between entities in text.',
+    description='information_extractor is a tool that leverages spaCy for coreference resolution and SpanBERT for relation extraction. This project integrates named entity recognition (NER) with relation extraction to identify and analyze relationships between entities in text.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
