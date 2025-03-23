@@ -1,14 +1,16 @@
 import spacy
 import logging
-from code.rel_extractor import extract_relations
-from code.spanbert import SpanBERT
+import os
+
+from iecode.rel_extractor import extract_relations
+from iecode.spanbert import SpanBERT
 
 # Load models once at startup
 print("Loading models...")  # Debugging message
 coref = spacy.load('en_core_web_md')
 coref.add_pipe('coreferee')
 nlp = spacy.load('en_core_web_md')
-spanbert = SpanBERT("./assets/pretrained_spanbert")
+spanbert = SpanBERT(os.path.join(os.path.dirname(__file__), "assets/pretrained_spanbert"))
 print("Models loaded!")  # Debugging message
 
 def setup_logging():
@@ -33,14 +35,15 @@ def process_entities(doc, logger):
     entities = {ent.text: ent.label_ for ent in doc.ents}
     logger.info(f"Entities: {entities}")
 
-    namedEntities = {}
+    named_entities = {}
     for ent in doc.ents:
-        if ent.label_ not in namedEntities:
-            namedEntities[ent.label_] = set()
-        namedEntities[ent.label_].add(ent.text)
+        if ent.label_ not in named_entities:
+            named_entities[ent.label_] = set()
+        named_entities[ent.label_].add(ent.text)
 
-    for label, texts in namedEntities.items():
+    for label, texts in named_entities.items():
         logger.info(f"{label}: {', '.join(texts)}")
+    return named_entities
 
 def print_details(doc, logger):
     logger.debug("--- Token Information ---")
@@ -64,13 +67,13 @@ def extract_information(text, details=True):
         print_details(doc, logger)
 
     logger.info("--- Named Entities ---")
-    process_entities(doc, logger)
+    named_entities = process_entities(doc, logger)
 
     logger.info("--- Extracted Relations ---")
     relations = extract_relations(doc, spanbert)
     logger.info(relations)
 
-    return relations, doc, resolved_text
+    return relations, doc, resolved_text, named_entities
 
 if __name__ == "__main__":
     input_text = "C++ was developed by Bjarne Stroustrup at Bell Labs in Murray Hill, New Jersey, USA, while he was working on his PhD thesis and exploring ways to enhance the C programming language."

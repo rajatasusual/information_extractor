@@ -39,7 +39,7 @@
 
 The `assets` directory contains the following pretrained models:
 
-- **pretrained_spanbert/** finetuned for TARCED use cases.
+- **pretrained_spanbert/** finetuned for TACRED use cases.
 - **corefereee_model_en** from stanford research
 - **en_core_web_md-3.50** from spaCy
 
