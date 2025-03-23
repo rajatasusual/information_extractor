@@ -61,10 +61,10 @@ Ensure that you have **Git LFS** installed to handle large model files.
 To extract relations using **spaCy** and **SpanBERT**, you can run the provided example script:  
 
 ```bash
-python code/information_extraction.py
+python main.py
 ```
 
-### Example (Inside `code/information_extraction.py`)  
+### Example (Inside `main.py`)  
 
 ```python
 import spacy
