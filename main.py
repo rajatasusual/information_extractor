@@ -73,7 +73,7 @@ def extract_information(text, details=True):
     relations = extract_relations(doc, spanbert)
     logger.info(relations)
 
-    return relations, doc, resolved_text, named_entities
+    return relations, named_entities
 
 if __name__ == "__main__":
     input_text = "C++ was developed by Bjarne Stroustrup at Bell Labs in Murray Hill, New Jersey, USA, while he was working on his PhD thesis and exploring ways to enhance the C programming language."
