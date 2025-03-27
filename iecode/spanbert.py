@@ -11,6 +11,8 @@ import json
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.checkpoint import checkpoint_sequential
+
 from iecode.pytorch_pretrained_bert.modeling import BertForSequenceClassification
 from iecode.pytorch_pretrained_bert.tokenization import BertTokenizer
 from scipy.special import softmax
@@ -133,32 +135,42 @@ def convert_examples_to_features(examples, max_seq_length, tokenizer, special_to
 
 def predict(model, device, eval_dataloader, verbose=True):
     model.eval()
-    preds = []
+    preds = None  # Initialize as None to avoid TypeError
+
     for input_ids, input_mask, segment_ids in eval_dataloader:
         input_ids = input_ids.to(device)
         input_mask = input_mask.to(device)
         segment_ids = segment_ids.to(device)
-        with torch.no_grad():
+
+        with torch.inference_mode():  # More memory efficient
             logits = model(input_ids, segment_ids, input_mask, labels=None)
-        if len(preds) == 0:
-            preds.append(logits.detach().cpu().numpy())
+
+        logits = logits[0] if isinstance(logits, tuple) else logits  # Handle tuple output
+        logits_np = logits.detach().cpu().numpy()
+
+        if preds is None:
+            preds = logits_np
         else:
-            preds[0] = np.append(preds[0], logits.detach().cpu().numpy(), axis=0)
-    if len(preds) == 0:
-        return None, None
-    pred_ids = np.argmax(preds[0], axis=1)
-    pred_proba = np.max(softmax(preds[0], axis=1), axis=1)
+            preds = np.append(preds, logits_np, axis=0)
+
+    if preds is None:
+        return None, None  # Ensure we return something if there's no data
+
+    pred_ids = np.argmax(preds, axis=1)
+    pred_proba = np.max(softmax(preds, axis=1), axis=1)
+
     return pred_ids, pred_proba
 
+
 class SpanBERT:
-    def __init__(self, pretrained_dir, model="spanbert-base-cased", max_seq_length=128, batch_size=32):
+    def __init__(self, pretrained_dir, model="spanbert-base-cased", max_seq_length=64, batch_size=16):
         assert os.path.exists(pretrained_dir), "Pre-trained model folder does not exist: {}".format(pretrained_dir)
         self.seed = 42
         self.max_seq_length = max_seq_length
         self.batch_size = batch_size
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu")
         self.n_gpu = torch.cuda.device_count()
-        self.fp16 = self.n_gpu > 0
+        self.fp16 = False
         self._set_seed()
         self.label2id = {label: i for i, label in enumerate(label_list)}
         self.id2label = {i: label for i, label in enumerate(label_list)}
@@ -167,8 +179,6 @@ class SpanBERT:
 
         print("Loading pre-trained SpanBERT from {}".format(pretrained_dir))
         self.classifier = BertForSequenceClassification.from_pretrained(pretrained_dir, num_labels=self.num_labels)
-        if self.fp16:
-            self.classifier.half()
         self.classifier.to(self.device)
 
     def _set_seed(self):
@@ -184,7 +194,7 @@ class SpanBERT:
         all_input_mask = torch.tensor([f.input_mask for f in features], dtype=torch.long)
         all_segment_ids = torch.tensor([f.segment_ids for f in features], dtype=torch.long)
         data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids)
-        dataloader = DataLoader(data, batch_size=self.batch_size)
+        dataloader = DataLoader(data, batch_size=self.batch_size, pin_memory=False)
         pred_ids, proba = predict(self.classifier, self.device, dataloader)
         if pred_ids is None:
             return None
@@ -207,6 +217,10 @@ if __name__ == "__main__":
         }
     ]
     preds = bert.predict(examples)
+    import gc
+    gc.collect()
+    torch.cuda.empty_cache()
+
     for example, pred in list(zip(examples, preds)):
         example["relation"] = pred
         print(example)
