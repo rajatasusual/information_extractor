@@ -4,6 +4,7 @@ Run SpanBERT on general test examples
 Scripts adopted from https://github.com/facebookresearch/SpanBERT
 """
 import os
+import psutil
 import random
 import time
 import json
@@ -137,37 +138,40 @@ def predict(model, device, eval_dataloader, verbose=True):
     model.eval()
     preds = None  # Initialize as None to avoid TypeError
 
-    for input_ids, input_mask, segment_ids in eval_dataloader:
-        input_ids = input_ids.to(device)
-        input_mask = input_mask.to(device)
-        segment_ids = segment_ids.to(device)
+    with torch.inference_mode():  # ✅ Wrap entire loop
+        for input_ids, input_mask, segment_ids in eval_dataloader:
+            input_ids, input_mask, segment_ids = (
+                input_ids.to(device),
+                input_mask.to(device),
+                segment_ids.to(device)
+            )
 
-        with torch.inference_mode():  # More memory efficient
-            logits = model(input_ids, segment_ids, input_mask, labels=None)
+            logits = model(input_ids, attention_mask=input_mask)
+            logits = logits[0] if isinstance(logits, tuple) else logits
+            logits_np = logits.cpu().numpy()  # ✅ Move tensor to NumPy immediately
 
-        logits = logits[0] if isinstance(logits, tuple) else logits  # Handle tuple output
-        logits_np = logits.detach().cpu().numpy()
+            if preds is None:
+                preds = logits_np
+            else:
+                preds = np.append(preds, logits_np, axis=0)
 
-        if preds is None:
-            preds = logits_np
-        else:
-            preds = np.append(preds, logits_np, axis=0)
+    return np.argmax(preds, axis=1), np.max(softmax(preds, axis=1), axis=1)
 
-    if preds is None:
-        return None, None  # Ensure we return something if there's no data
-
-    pred_ids = np.argmax(preds, axis=1)
-    pred_proba = np.max(softmax(preds, axis=1), axis=1)
-
-    return pred_ids, pred_proba
-
+def get_safe_batch_size(default=8, min_size=2):
+    """Dynamically adjust batch size based on available memory"""
+    available_mem = psutil.virtual_memory().available / (1024 ** 3)  # Convert to GB
+    if available_mem < 2:  # If RAM < 2GB, reduce batch size
+        return min_size
+    elif available_mem < 4:
+        return max(min_size, default // 2)
+    return default
 
 class SpanBERT:
-    def __init__(self, pretrained_dir, model="spanbert-base-cased", max_seq_length=64, batch_size=16):
+    def __init__(self, pretrained_dir, model="spanbert-base-cased", max_seq_length=64, batch_size=8):
         assert os.path.exists(pretrained_dir), "Pre-trained model folder does not exist: {}".format(pretrained_dir)
         self.seed = 42
         self.max_seq_length = max_seq_length
-        self.batch_size = batch_size
+        self.batch_size = get_safe_batch_size(batch_size)
         self.device = torch.device("cpu")
         self.n_gpu = torch.cuda.device_count()
         self.fp16 = False
@@ -190,11 +194,20 @@ class SpanBERT:
 
     def predict(self, examples):
         features = convert_examples_to_features(examples, self.max_seq_length, self.tokenizer, special_tokens)
-        all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
-        all_input_mask = torch.tensor([f.input_mask for f in features], dtype=torch.long)
-        all_segment_ids = torch.tensor([f.segment_ids for f in features], dtype=torch.long)
-        data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids)
-        dataloader = DataLoader(data, batch_size=self.batch_size, pin_memory=False)
+        all_input_ids = np.array([f.input_ids for f in features], dtype=np.int32)
+        all_input_mask = np.array([f.input_mask for f in features], dtype=np.int32)
+        all_segment_ids = np.array([f.segment_ids for f in features], dtype=np.int32)
+        data = TensorDataset(
+                torch.from_numpy(all_input_ids),
+                torch.from_numpy(all_input_mask),
+                torch.from_numpy(all_segment_ids)
+            )
+        dataloader = DataLoader(data, 
+            batch_size=self.batch_size, 
+            num_workers=0, 
+            pin_memory=False,
+            persistent_workers=False  # Avoid keeping workers alive unnecessarily
+            )
         pred_ids, proba = predict(self.classifier, self.device, dataloader)
         if pred_ids is None:
             return None
@@ -217,9 +230,13 @@ if __name__ == "__main__":
         }
     ]
     preds = bert.predict(examples)
+
+    # Clean up memory
     import gc
-    gc.collect()
-    torch.cuda.empty_cache()
+    del input_ids, input_mask, segment_ids
+    del all_input_ids, all_input_mask, all_segment_ids
+    torch.cuda.empty_cache()  # Even on CPU, helps free PyTorch's internal buffers
+    gc.collect()  # Force Python garbage collection
 
     for example, pred in list(zip(examples, preds)):
         example["relation"] = pred
