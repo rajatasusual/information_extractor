@@ -68,7 +68,6 @@ def print_details(doc, logger):
 def extract_information(text, details=True):
     logger = setup_logging()
 
-    logger.info("--- Coreference Resolution ---")
     resolved_text = process_coreference(text)
     logger.info(f"Resolved text: {resolved_text}")
     doc = spacy_nlp(resolved_text, logger)
@@ -76,10 +75,8 @@ def extract_information(text, details=True):
     if details:
         print_details(doc, logger)
 
-    logger.info("--- Named Entities ---")
     named_entities = process_entities(doc, logger)
 
-    logger.info("--- Extracted Relations ---")
     spanbert = load_spanbert_model()
     relations = extract_relations(doc, spanbert)
     logger.info(relations)
