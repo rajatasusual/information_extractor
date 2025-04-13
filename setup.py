@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 setup(
     name='information_extractor',
-    version='0.1.0',
+    version='0.1.1',
     author='Rajatasusual',
     description='information_extractor is a tool that leverages spaCy for coreference resolution and SpanBERT for relation extraction. This project integrates named entity recognition (NER) with relation extraction to identify and analyze relationships between entities in text.',
     long_description=long_description,

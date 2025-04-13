@@ -84,5 +84,8 @@ def extract_information(text, details=True):
     return relations, named_entities
 
 if __name__ == "__main__":
-    input_text = "C++ was developed by Bjarne Stroustrup at Bell Labs in Murray Hill, New Jersey, USA, while he was working on his PhD thesis and exploring ways to enhance the C programming language."
+    input_text = """
+The history of Rome spans over two and a half thousand years, from the legendary founding of the city of Rome in 753 BC to the fall of the Western Roman Empire in 476 AD. The city, which was founded by Romulus and Remus, was originally a small settlement on the Palatine Hill.
+The Roman Empire was a vast and powerful state that stretched from the British Isles to Egypt and from Spain to Syria. It was a major centre of trade, commerce and culture, and was home to many famous landmarks such as the Colosseum, the Pantheon and the Forum Romanum. The empire was ruled by a series of emperors, including Augustus, Trajan, Marcus Aurelius and Constantine. It was also the centre of Christianity, with the Pope based in Rome.
+"""
     extract_information(input_text)
