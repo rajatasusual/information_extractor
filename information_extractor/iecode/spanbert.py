@@ -6,13 +6,11 @@ Scripts adopted from https://github.com/facebookresearch/SpanBERT
 import os
 import psutil
 import random
-import time
 import json
 
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from torch.utils.checkpoint import checkpoint_sequential
 
 from information_extractor.iecode.pytorch_pretrained_bert.modeling import BertForSequenceClassification
 from information_extractor.iecode.pytorch_pretrained_bert.tokenization import BertTokenizer
@@ -134,11 +132,11 @@ def convert_examples_to_features(examples, max_seq_length, tokenizer, special_to
         features.append(InputFeatures(input_ids=input_ids, input_mask=input_mask, segment_ids=segment_ids))
     return features
 
-def predict(model, device, eval_dataloader, verbose=True):
+def predict(model, device, eval_dataloader):
     model.eval()
     preds = None  # Initialize as None to avoid TypeError
 
-    with torch.inference_mode():  # ✅ Wrap entire loop
+    with torch.inference_mode(): 
         for input_ids, input_mask, segment_ids in eval_dataloader:
             input_ids, input_mask, segment_ids = (
                 input_ids.to(device),
@@ -148,7 +146,7 @@ def predict(model, device, eval_dataloader, verbose=True):
 
             logits = model(input_ids, attention_mask=input_mask)
             logits = logits[0] if isinstance(logits, tuple) else logits
-            logits_np = logits.cpu().numpy()  # ✅ Move tensor to NumPy immediately
+            logits_np = logits.cpu().numpy() 
 
             if preds is None:
                 preds = logits_np
@@ -174,9 +172,7 @@ class SpanBERT:
         self.batch_size = get_safe_batch_size(batch_size)
         self.device = torch.device("cpu")
         self.n_gpu = torch.cuda.device_count()
-        self.fp16 = False
         self._set_seed()
-        self.label2id = {label: i for i, label in enumerate(label_list)}
         self.id2label = {i: label for i, label in enumerate(label_list)}
         self.num_labels = len(label_list)
         self.tokenizer = BertTokenizer.from_pretrained(model, do_lower_case=False)
