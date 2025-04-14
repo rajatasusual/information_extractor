@@ -10,7 +10,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        lfs: true
+        lfs: false
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -19,22 +19,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python3 -m pip install --upgrade pip
-        pip3 install -r requirements.txt
+        pip3 install .
 
-    - name: Run main.py
+    - name: Download model
       run: |
-        python main.py
-
-    - name: Build and package
+        ie --download-model
+    
+    - name: Run tests
       run: |
-        pip install wheel
-        python setup.py sdist
-        python setup.py bdist_wheel
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: information_extractor
-        path: dist/
-      
+        ie
