@@ -1,12 +1,9 @@
-# information_extractor  
+# information-extractor  
+**information-extractor** is a Python package that combines **spaCy**, **coreferee**, and **SpanBERT** to extract structured relationships between entities in natural language text. It's purpose-built for anyone who wants to bridge NER, coreference resolution, and relation extraction into one streamlined pipeline.
 
 ## Overview  
-[![CI](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml/badge.svg)](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml)  
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)  
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)  
-
-**information_extractor** is a Python package that combines **spaCy**, **coreferee**, and **SpanBERT** to extract structured relationships between entities in natural language text. It's purpose-built for anyone who wants to bridge NER, coreference resolution, and relation extraction into one streamlined pipeline.
+[![CI](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml/badge.svg)](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)  [![Upload Python Package](https://github.com/rajatasusual/information_extractor/actions/workflows/publish.yml/badge.svg)](https://github.com/rajatasusual/information_extractor/actions/workflows/publish.yml)
+[![PyPI version](https://badge.fury.io/py/information-extractor.svg)](https://pypi.org/project/information-extractor/)
 
 ## Features
 
@@ -29,7 +26,7 @@ ie --text "Barack Obama was born in Hawaii." [--deps]
 ## Installation
 
 ```bash
-pip install information_extractor
+pip install information-extractor
 ```
 
 ### Optional: Download model dependencies
