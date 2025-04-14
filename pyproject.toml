@@ -83,3 +83,6 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[tool.setuptools.package-data]
+information_extractor = ["assets/**/*.json"]

@@ -3,8 +3,8 @@ import os
 import argparse
 import spacy
 
-from iecode.rel_extractor import extract_relations
-from iecode.spanbert import SpanBERT
+from information_extractor.iecode.rel_extractor import extract_relations
+from information_extractor.iecode.spanbert import SpanBERT
 from information_extractor.download_model import download_spanbert
 
 # Global variables for models

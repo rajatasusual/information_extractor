@@ -14,8 +14,8 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.checkpoint import checkpoint_sequential
 
-from iecode.pytorch_pretrained_bert.modeling import BertForSequenceClassification
-from iecode.pytorch_pretrained_bert.tokenization import BertTokenizer
+from information_extractor.iecode.pytorch_pretrained_bert.modeling import BertForSequenceClassification
+from information_extractor.iecode.pytorch_pretrained_bert.tokenization import BertTokenizer
 from scipy.special import softmax
 
 # Special tokens used by the model.
