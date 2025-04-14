@@ -72,10 +72,15 @@ def setup_dependencies():
     # Install spaCy model wheel
     install_wheel("https://github.com/rajatasusual/information_extractor/raw/master/assets/en_core_web_md-3.5.0-py3-none-any.whl")
 
-    # Download and extract coreferee model
+    # Download and install coreferee model
+    coreferee_model_dir = os.path.join(ASSETS_DIR, "coreferee_model_en")
     extract_zip(
         "https://github.com/rajatasusual/information_extractor/raw/master/assets/coreferee_model_en.zip",
-        os.path.join(ASSETS_DIR, "coreferee_model_en")
+        coreferee_model_dir
     )
 
+    print("Installing coreferee-model-en...")
+    subprocess.check_call(["pip", "install", coreferee_model_dir])
+
     print("✅ All dependencies are set up.")
+
