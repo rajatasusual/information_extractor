@@ -5,7 +5,7 @@ import spacy
 
 from information_extractor.iecode.rel_extractor import extract_relations
 from information_extractor.iecode.spanbert import SpanBERT
-from information_extractor.download_model import download_spanbert
+from information_extractor.dependencies import setup_dependencies
 
 # Global variables for models
 SPACY_MODEL = None
@@ -87,13 +87,12 @@ def extract_information(text, details=True):
     return relations, named_entities
 
 def main():
-    parser = argparse.ArgumentParser(description="Information Extractor CLI")
-    parser.add_argument('--download-model', action='store_true', help="Download the SpanBERT model")
-
+    parser = argparse.ArgumentParser(description="Run Information Extractor")
+    parser.add_argument('--deps', action='store_true', help='Download SpanBERT and required model dependencies')
     args = parser.parse_args()
 
-    if args.download_model:
-        download_spanbert()
+    if args.deps:
+        setup_dependencies()
         return
     
     input_text = """
