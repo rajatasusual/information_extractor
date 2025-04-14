@@ -1,106 +1,107 @@
 # information_extractor  
 
 ## Overview  
-[![CI](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml/badge.svg)](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![CI](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml/badge.svg)](https://github.com/rajatasusual/information_extractor/actions/workflows/ci.yml)  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)  
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)  
 
-**information_extractor** is a tool that leverages **spaCy** for coreference resolution and **SpanBERT** for relation extraction. This project integrates named entity recognition (NER) with relation extraction to identify and analyze relationships between entities in text.  
+**information_extractor** is a Python package that combines **spaCy**, **coreferee**, and **SpanBERT** to extract structured relationships between entities in natural language text. It's purpose-built for anyone who wants to bridge NER, coreference resolution, and relation extraction into one streamlined pipeline.
 
 ## Features
 
-### SpanBERT Model
-- Pre-trained model for relation extraction between entities
-- Supports multiple entity types (PERSON, ORGANIZATION, LOCATION, etc.)
-- Handles special token markers for subject and object entities
-- Uses BERT architecture for sequence classification
-- GPU acceleration support when available
-- Configurable batch size and sequence length
+### ✅ Entity Linking & Coreference Resolution
+- Uses `spaCy` with `coreferee` to resolve pronouns and link entity mentions.
+- Flexible support for multiple entity types: `PERSON`, `ORG`, `LOC`, `DATE`, etc.
 
-### Entity Processing
-- Maps between spaCy and SpanBERT entity labels
-- Supports common entity types:
-    - Organizations (ORG)
-    - Persons (PERSON)
-    - Locations (GPE, LOC)
-    - Dates (DATE)
-    - And more
+### ✅ Relation Extraction with SpanBERT
+- Uses fine-tuned SpanBERT model trained on TACRED.
+- Handles subject/object marking and context-aware classification.
+- Confidence scoring and de-duplication of extracted relations.
+- GPU acceleration supported out of the box.
 
-### Relation Extraction
-- Creates entity pairs from spaCy sentences
-- Handles bidirectional relationships
-- Configurable confidence threshold
-- Deduplicates relations with confidence scoring
-- Returns structured relation tuples
-- Detailed logging for debugging
+### ✅ CLI Interface
+```bash
+ie --text "Barack Obama was born in Hawaii." [--deps]
+```
+- `--deps`: Downloads and installs required pretrained models if not present.
 
-### Pretrained Models
-
-The `assets` directory contains the following pretrained models:
-
-- **pretrained_spanbert/** finetuned for TACRED use cases.
-- **corefereee_model_en** from stanford research
-- **en_core_web_md-3.50** from spaCy
-
-## Installation  
-
-To install and set up the project, run the following commands:  
+## Installation
 
 ```bash
-GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/rajatasusual/information_extractor.git
-cd information_extractor
-pip3 install -r requirements.txt
-git lfs pull --include "assets/pretrained_spanbert/pytorch_model.bin"
+pip install information_extractor
 ```
 
-Ensure that you have **Git LFS** installed to handle large model files.  
-
-## Usage  
-
-To extract relations using **spaCy** and **SpanBERT**, you can run the provided example script:  
-
+### Optional: Download model dependencies
+Run the following once to download SpanBERT, spaCy model, coreferee model:
 ```bash
-python main.py
+ie --deps
 ```
 
-### Example (Inside `main.py`)  
+Alternatively, you can import and run the dependency script directly:
+```python
+from information_extractor.dependency import setup_dependencies
+setup_dependencies()
+```
+
+## Example Usage
 
 ```python
-import spacy
-from spanbert_module import SpanBERT  # Import SpanBERT model
+from information_extractor.pipeline import RelationExtractor
 
-# Load spaCy NLP model
-nlp = spacy.load("en_core_web_md")
+text = "Sundar Pichai is the CEO of Google. He lives in California."
 
-# Sample text
-text = "Bill Gates founded Microsoft. Microsoft is headquartered in Redmond."
+extractor = RelationExtractor()
+results = extractor.extract(text)
 
-# Process text with spaCy
-doc = nlp(text)
-
-# Load SpanBERT
-pretrained_dir = "assets/pretrained_spanbert"
-spanbert = SpanBERT(pretrained_dir=pretrained_dir)
-
-# Extract relations
-relations = spanbert.extract_relations(doc)
-print(relations)
+for relation in results:
+    print(relation)
 ```
 
-## Acknowledgments  
+### Sample Output
+```json
+[
+  {
+    "subject": "Sundar Pichai",
+    "object": "Google",
+    "relation": "per:employee_of",
+    "confidence": 0.92
+  },
+  ...
+]
+```
 
-This project integrates **SpanBERT** from **Facebook Research**. If you use this project, please cite:  
+## Project Structure
+```
+information_extractor/
+├── assets/
+│   └── pretrained_spanbert/
+├── dependency.py         # Downloads all model dependencies
+├── pipeline.py           # Core logic for NLP + SpanBERT
+├── main.py               # CLI entrypoint
+```
+
+## Pretrained Assets
+Models are downloaded from hosted GitHub release assets:
+- ✅ `SpanBERT` weights & config
+- ✅ `en_core_web_md` spaCy model
+- ✅ `coreferee_model_en` for coreference resolution
+- ✅ `torch` wheel for reproducibility
+
+## Citation  
+
+This project builds on the work of Facebook Research. If you use **SpanBERT**, please cite:
 
 ```
 @article{joshi2019spanbert,
-    title={{SpanBERT}: Improving Pre-training by Representing and Predicting Spans},
-    author={Mandar Joshi and Danqi Chen and Yinhan Liu and Daniel S. Weld and Luke Zettlemoyer and Omer Levy},
-    journal={arXiv preprint arXiv:1907.10529},
-    year={2019}
+  title={{SpanBERT}: Improving Pre-training by Representing and Predicting Spans},
+  author={Mandar Joshi and Danqi Chen and Yinhan Liu and Daniel S. Weld and Luke Zettlemoyer and Omer Levy},
+  journal={arXiv preprint arXiv:1907.10529},
+  year={2019}
 }
 ```
 
-## License & Disclaimer  
+## License
 
-This project is intended for research and educational purposes. The SpanBERT model belongs to **Facebook Research**, and its use must comply with their licensing terms. We are not affiliated with Facebook Research.  
+MIT. See [LICENSE](./LICENSE) for full terms.  
+Note: This project redistributes pretrained model weights for convenience under fair use for research.

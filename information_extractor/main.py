@@ -1,10 +1,7 @@
 import logging
 import os
 import argparse
-import spacy
 
-from information_extractor.iecode.rel_extractor import extract_relations
-from information_extractor.iecode.spanbert import SpanBERT
 from information_extractor.dependencies import setup_dependencies
 
 # Global variables for models
@@ -95,6 +92,11 @@ def main():
         setup_dependencies()
         return
     
+    import spacy
+
+    from information_extractor.iecode.rel_extractor import extract_relations
+    from information_extractor.iecode.spanbert import SpanBERT
+
     input_text = """
 The history of Rome spans over two and a half thousand years, from the legendary founding of the city of Rome in 753 BC to the fall of the Western Roman Empire in 476 AD. The city, which was founded by Romulus and Remus, was originally a small settlement on the Palatine Hill.
 The Roman Empire was a vast and powerful state that stretched from the British Isles to Egypt and from Spain to Syria. It was a major centre of trade, commerce and culture, and was home to many famous landmarks such as the Colosseum, the Pantheon and the Forum Romanum. The empire was ruled by a series of emperors, including Augustus, Trajan, Marcus Aurelius and Constantine. It was also the centre of Christianity, with the Pope based in Rome.
