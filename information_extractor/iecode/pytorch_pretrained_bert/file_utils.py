@@ -13,7 +13,6 @@ import os
 import shutil
 import tempfile
 import fnmatch
-from functools import wraps
 from hashlib import sha256
 import sys
 from io import open
@@ -56,33 +55,6 @@ def url_to_filename(url, etag=None):
         filename += '.' + etag_hash.hexdigest()
 
     return filename
-
-
-def filename_to_url(filename, cache_dir=None):
-    """
-    Return the url and etag (which may be ``None``) stored for `filename`.
-    Raise ``EnvironmentError`` if `filename` or its stored metadata do not exist.
-    """
-    if cache_dir is None:
-        cache_dir = PYTORCH_PRETRAINED_BERT_CACHE
-    if sys.version_info[0] == 3 and isinstance(cache_dir, Path):
-        cache_dir = str(cache_dir)
-
-    cache_path = os.path.join(cache_dir, filename)
-    if not os.path.exists(cache_path):
-        raise EnvironmentError("file {} not found".format(cache_path))
-
-    meta_path = cache_path + '.json'
-    if not os.path.exists(meta_path):
-        raise EnvironmentError("file {} not found".format(meta_path))
-
-    with open(meta_path, encoding="utf-8") as meta_file:
-        metadata = json.load(meta_file)
-    url = metadata['url']
-    etag = metadata['etag']
-
-    return url, etag
-
 
 def cached_path(url_or_filename, cache_dir=None):
     """
@@ -200,21 +172,3 @@ def get_from_cache(url, cache_dir=None):
             logger.info("removing temp file %s", temp_file.name)
 
     return cache_path
-
-
-def read_set_from_file(filename):
-    '''
-    Extract a de-duped collection (set) of text from a file.
-    Expected file format is one item per line.
-    '''
-    collection = set()
-    with open(filename, 'r', encoding='utf-8') as file_:
-        for line in file_:
-            collection.add(line.rstrip())
-    return collection
-
-
-def get_file_extension(path, dot=True, lower=True):
-    ext = os.path.splitext(path)[1]
-    ext = ext if dot else ext[1:]
-    return ext.lower() if lower else ext
