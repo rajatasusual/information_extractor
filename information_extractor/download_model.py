@@ -13,7 +13,7 @@ def download_spanbert():
     
     config_url = "https://github.com/rajatasusual/information_extractor/raw/refs/heads/master/assets/pretrained_spanbert/config.json"
     
-    if not os.path.exists(target_path) ocd r os.path.getsize(target_path) != EXPECTED_SIZE:
+    if not os.path.exists(target_path) or os.path.getsize(target_path) != EXPECTED_SIZE:
         print(f"Model missing or corrupted. Downloading SpanBERT model to {target_path}...")
         with urllib.request.urlopen(model_url) as response:
             with open(target_path, "wb") as fh:
