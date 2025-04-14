@@ -23,7 +23,7 @@ jobs:
 
     - name: Download model
       run: |
-        ie --download-model
+        ie --deps
     
     - name: Run tests
       run: |
